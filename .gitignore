@@ -1,0 +1,6 @@
+#Carpeta de imagen
+img
+
+# Capa de datos
+FIRMS_HN.geojson
+FIRMS_HN.qmd

@@ -1,0 +1,170 @@
+/* style.css */
+/* Leyenda */
+.legend {
+  background: white;
+  padding: 10px;
+  line-height: 15px;
+  color: #333;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  font-size: 12px;
+  border-radius: 5px;
+}
+
+.legend i {
+  float: left;
+  margin-right: 6px;
+  opacity: 0.9;
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+}
+
+.legend h4 {
+  margin: 0 0 5px;
+  font-size: 12px;
+}
+
+/* Barra superior fija */
+/* Header */
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #347811;
+  color: #fff;
+  padding: 10px 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+}
+
+#header h1 {
+  margin: 0 0 0 10px;
+  font-size: 18px;
+  font-weight: normal;
+  font-family: 'Merriweather', serif;
+}
+
+/* Logo */
+#logo {
+  height: 25px;
+  width: auto;
+}
+
+#map {
+  height: calc(100vh - 50px); /* Altura del mapa descontando la barra superior */
+  margin-top: 50px;           /* Espacio para que no lo tape el header */
+}
+
+/* Forzar visibilidad del control */
+.leaflet-control-layers {
+  z-index: 1100 !important;
+}
+
+/* Botón flotante */
+#dashboard-toggle {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  z-index: 1100;
+  background: #6b9cb3;
+  color: white;
+  padding: 6px 10px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  user-select: none;
+}
+
+.dashboard {
+  position: absolute;
+  top: 60px; /* Justo encima de la leyenda */
+  right: 10px;
+  background: white;
+  padding: 15px;
+  font-size: 14px;
+  color: #333;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  width: 100%;
+  max-width: 420px;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  font-family: 'Segoe UI', 'Merriweather', sans-serif; /* fuente más suave */
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  max-height: calc(100vh - 70px); /* Altura máxima para evitar desbordamiento */
+  margin-top: 10px;
+}
+
+/* Contenedores de los gráficos */
+.chart-wrapper {
+  width: 100%;
+  height: 250px;
+  margin-bottom: 10px;
+}
+
+.chart-wrapper canvas {
+  display: block;
+  margin: 10px auto;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
+/* Columna izquierda (texto) */
+.dashboard-text {
+  flex: 1;
+  padding-right: 15px;
+}
+
+/* Columna derecha (gráficos) */
+.dashboard-charts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dashboard.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+}
+
+.dashboard h4 {
+  margin-top: 0;
+  font-size: 15px;
+}
+
+#dashboard ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 5px 0 0 0;
+}
+
+#dashboard ul li {
+  font-size: 13px;
+  margin-left: 10px;
+}
+
+.dashboard:not(.hidden) {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+body {
+  font-family: 'Segoe UI', 'Merriweather', sans-serif;
+  background-color: #f8f9fa;
+}
+
+p, li, h4 {
+  margin: 4px 0;
+}

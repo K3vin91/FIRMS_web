@@ -1,68 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <title>Incendios NASA FIRMS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Fuente formal desde Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
- 
-  <!-- Hoja de estilos Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <meta charset="UTF-8">
+    <title>GeoPortal FIRMS - Honduras</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
 </head>
-
 <body>
-  <div id="header">
-  <img src="img_logo/logo.png" alt="Logo" id="logo">
-  <h1>Incendios detectados por satélites (NASA FIRMS)</h1>
-  </div>
 
-  <!-- Selector de capas desde PostGIS -->
-  <div id="layer-selector" style="position:absolute; top:60px; left:10px; z-index:1100; background:white; padding:8px; border-radius:5px; box-shadow:0 0 6px rgba(0,0,0,0.3);">
-    <label for="layerSelect"><strong>Capa a visualizar:</strong></label><br>
+<!-- Header -->
+<div id="header">
+    <img id="logo" src="{{ url_for('static', filename='/img_logo/logo.png') }}" alt="Logo">
+    <h1>GeoPortal FIRMS - Honduras</h1>
+</div>
+
+<!-- Controles superiores -->
+<div style="position:absolute; top:60px; left:10px; z-index:1100; display:flex; flex-direction:column; gap:5px;">
     <select id="layerSelect">
-      <option disabled selected>-- Selecciona una capa --</option>
-      <!-- Opciones se llenarán dinámicamente -->
+        <option value="">Selecciona una capa</option>
     </select>
-  </div>
- 
-  <!-- Botón flotante para mostrar/ocultar el dashboard -->
-  <div id="dashboard-toggle">🛈</div>
-   
-  <!-- Panel de dashboard colapsable -->
-  <div id="dashboard" class="dashboard hidden">
+    <input type="date" id="fechaInput">
+    <button id="cargarBtn">Cargar datos</button>
+</div>
+
+<!-- Mensaje -->
+<div id="mensaje"></div>
+
+<!-- Botón para mostrar dashboard -->
+<div id="dashboard-toggle">Dashboard</div>
+
+<!-- Dashboard -->
+<div class="dashboard hidden" id="dashboard">
+    <!-- Columna de texto -->
     <div class="dashboard-text">
-      <h4>Resumen</h4>
-      <p>Total de incendios: <span id="total-incendios">0</span></p>
-      <p>Confianza alta: <span id="alta">0</span></p>
-      <p>Confianza nominal: <span id="nominal">0</span></p>
-      <p>Confianza baja: <span id="baja">0</span></p>
-      <p>FRP total: <span id="frp-total">0</span></p>
-      <p>FRP promedio: <span id="frp-prom">0</span></p>
-      <hr>
-      <ul id="por-satelite"></ul>
+        <h4>Estadísticas</h4>
+        <ul>
+            <li>Total de incendios: <span id="total-incendios">0</span></li>
+            <li>Alta: <span id="alta">0</span></li>
+            <li>Nominal: <span id="nominal">0</span></li>
+            <li>Baja: <span id="baja">0</span></li>
+            <li>FRP Total: <span id="frp-total">0</span></li>
+            <li>FRP Promedio: <span id="frp-prom">0</span></li>
+        </ul>
+        <h4>Por Satélite</h4>
+        <ul id="por-satelite"></ul>
     </div>
 
+    <!-- Columna de gráficos -->
     <div class="dashboard-charts">
-      <!-- Contenedor para el gráfico de barras -->
-      <div class="chart-wrapper">
-        <canvas id="confChart"></canvas>
-      </div>
-      
-      <!-- Contenedor para el gráfico de pastel -->
-      <div class="chart-wrapper">
-        <canvas id="satChart"></canvas>
-      </div>
+        <div class="chart-wrapper">
+            <canvas id="confChart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="satChart"></canvas>
+        </div>
     </div>
-  </div>
+</div>
 
-  <div id="map"></div>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="{{ url_for('static', filename='js/mapa.js') }}"></script>
+<!-- Mapa -->
+<div id="map"></div>
+
+<!-- Librerías -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@7.4.0/dist/ol.css" />
+
+<!-- Asegúrate de tener proj4 incluido -->
+<!-- proj4 como script global -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+<!-- ol.proj.proj4 requiere ol >= 6 -->
+<script src="https://cdn.jsdelivr.net/npm/ol@6.15.1/dist/ol.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/ol@7.4.0/dist/ol.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<!-- JS personalizado -->
+<script src="{{ url_for('static', filename='js/mapa.js') }}"></script>
 </body>
 </html>

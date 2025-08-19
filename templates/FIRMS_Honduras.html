@@ -57,8 +57,27 @@
     </div>
 </div>
 
+
+<!-- Leyenda -->
+<div id="legend">
+    <h4>Intensidad de Incendios</h4>
+    <div class="legend-item"><div class="legend-color" style="background:#ffffb2;"></div><span>Baja</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#fecc5c;"></div><span>Media</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#fd8d3c;"></div><span>Alta</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#f03b20;"></div><span>Muy Alta</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#bd0026;"></div><span>Extrema</span></div>
+</div>
+
 <!-- Mapa -->
-<div id="map"></div>
+<!-- Mapa -->
+<div id="map">
+    <!-- Selector de capa base -->
+    <div id="base-layer-controls">
+        <label><input type="radio" name="base-layer" id="stamen-terrain" checked> Stamen Terrain</label>
+        <label><input type="radio" name="base-layer" id="osm-standard"> OSM Standard</label>
+        <label><input type="radio" name="base-layer" id="esri-satellite"> Esri Satellite</label>
+    </div>
+</div>
 
 <!-- Librerías -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@7.4.0/dist/ol.css" />
@@ -67,8 +86,6 @@
 <!-- proj4 como script global -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
 <!-- ol.proj.proj4 requiere ol >= 6 -->
-<script src="https://cdn.jsdelivr.net/npm/ol@6.15.1/dist/ol.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/ol@7.4.0/dist/ol.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>

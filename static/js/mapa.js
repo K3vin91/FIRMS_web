@@ -5,17 +5,54 @@ document.addEventListener("DOMContentLoaded", () => {
   ol.proj.proj4.register(proj4);
 
   // === Crear mapa OpenLayers ===
-  const map = new ol.Map({
-    target: 'map',
-    layers: [
-      new ol.layer.Tile({ source: new ol.source.OSM() })
-    ],
-    view: new ol.View({
-      center: ol.proj.fromLonLat([-86.2, 14.75]),
-      zoom: 8
-    }),
-    controls: [] // sin controles para evitar error
+  const stamenTerrain = new ol.layer.Tile({
+      title: 'Stamen Terrain',
+      visible: true,
+      source: new ol.source.XYZ({
+          url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}.jpg?api_key=4e7385c0-ac3a-48cc-b0b4-e3951ff26883',
+          maxZoom: 18
+      })
   });
+
+  const osmStandard = new ol.layer.Tile({
+      title: 'OSM Standard',
+      visible: false,
+      source: new ol.source.OSM()
+  });
+
+  const esriSatellite = new ol.layer.Tile({
+      title: 'Esri Satellite',
+      visible: false,
+      source: new ol.source.XYZ({
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          attributions: '&copy; Esri'
+      })
+  });
+
+  // --- Crear mapa ---
+  const map = new ol.Map({
+      target: 'map',
+      layers: [stamenTerrain, osmStandard, esriSatellite],
+      view: new ol.View({
+          center: ol.proj.fromLonLat([-86.5, 14.75]), // Centrado en Honduras
+          zoom: 8
+      }),
+      controls: [
+          new ol.control.Attribution({ collapsible: false }),
+          new ol.control.Zoom()
+      ]
+  });
+
+  // --- Cambiar visibilidad al seleccionar radio ---
+  document.querySelectorAll('input[name="base-layer"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+          stamenTerrain.setVisible(this.id === 'stamen-terrain');
+          osmStandard.setVisible(this.id === 'osm-standard');
+          esriSatellite.setVisible(this.id === 'esri-satellite');
+      });
+  });
+
+
 
   // Variables globales
   let vectorLayerFirms = null;      // capa de puntos FIRMS

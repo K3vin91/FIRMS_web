@@ -9,8 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
       title: 'Stamen Terrain',
       visible: true,
       source: new ol.source.XYZ({
-          url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}.jpg?api_key=4e7385c0-ac3a-48cc-b0b4-e3951ff26883',
-          maxZoom: 18
+          url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}.jpg?api_key=4e7385c0-ac3a-48cc-b0b4-e3951ff26883'
       })
   });
 
@@ -29,10 +28,20 @@ document.addEventListener("DOMContentLoaded", () => {
       })
   });
 
+  const mapboxOutdoors = new ol.layer.Tile({
+    source: new ol.source.XYZ({
+      url: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaXJpYXNrZXZpbjkxIiwiYSI6ImNrdjVvN2dvazFjYzIybm5uMnltNHhxbTYifQ.xXx6RQ6Ygh-w-TXM52DW3A`,
+      attributions: '© Mapbox © OpenStreetMap contributors',
+      tileSize: 256
+    }),
+    visible: false,
+    title: 'MapboxOutdoors'
+  });
+
   // --- Crear mapa ---
   const map = new ol.Map({
       target: 'map',
-      layers: [stamenTerrain, osmStandard, esriSatellite],
+      layers: [stamenTerrain, osmStandard, esriSatellite, mapboxOutdoors],
       view: new ol.View({
           center: ol.proj.fromLonLat([-86.5, 14.75]), // Centrado en Honduras
           zoom: 8
@@ -49,9 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
           stamenTerrain.setVisible(this.id === 'stamen-terrain');
           osmStandard.setVisible(this.id === 'osm-standard');
           esriSatellite.setVisible(this.id === 'esri-satellite');
+          mapboxOutdoors.setVisible(this.id === 'Mapbox-Outdoors');
       });
   });
-
 
 
   // Variables globales
@@ -296,9 +305,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // === Cambio selector de capas (carga automática) ===
-  document.getElementById('layerSelect').addEventListener('change', (e)=>{
+  document.getElementById('layerSelect').addEventListener('change', (e) => {
     const layerName = e.target.value;
-    if(layerName) cargarSelector(layerName);
-  });
 
+    if (layerName) {
+      // cargar la capa seleccionada
+      cargarSelector(layerName);
+    } else {
+      // limpiar si regresa a "Selecciona una capa"
+      if (vectorLayerSelector) {
+        map.removeLayer(vectorLayerSelector);
+        vectorLayerSelector = null;
+      }
+    }
+  });
 });

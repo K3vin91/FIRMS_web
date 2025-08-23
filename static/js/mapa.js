@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   proj4.defs("EPSG:32616","+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs");
   ol.proj.proj4.register(proj4);
 
-  // === Crear mapa OpenLayers ===
+  // === Capas base ===
   const stamenTerrain = new ol.layer.Tile({
       title: 'Stamen Terrain',
       visible: true,
@@ -38,12 +38,23 @@ document.addEventListener("DOMContentLoaded", () => {
     title: 'MapboxOutdoors'
   });
 
-  // --- Crear mapa ---
+  // === Capa ráster dinámica ===
+  const rasterLayer = new ol.layer.Image({
+      visible: false,
+      source: new ol.source.ImageWMS({
+          url: 'http://localhost:8080/geoserver/raster/wms',
+          params: {'LAYERS': '', 'TILED': true},
+          ratio: 1,
+          serverType: 'geoserver'
+      })
+  });
+
+  // === Crear mapa ===
   const map = new ol.Map({
       target: 'map',
-      layers: [stamenTerrain, osmStandard, esriSatellite, mapboxOutdoors],
+      layers: [stamenTerrain, osmStandard, esriSatellite, mapboxOutdoors, rasterLayer],
       view: new ol.View({
-          center: ol.proj.fromLonLat([-86.5, 14.75]), // Centrado en Honduras
+          center: ol.proj.fromLonLat([-86.5, 14.75]),
           zoom: 8
       }),
       controls: [
@@ -52,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ]
   });
 
-  // --- Cambiar visibilidad al seleccionar radio ---
+  // === Cambio de base layer ===
   document.querySelectorAll('input[name="base-layer"]').forEach(radio => {
       radio.addEventListener('change', function() {
           stamenTerrain.setVisible(this.id === 'stamen-terrain');
@@ -62,12 +73,47 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-
-  // Variables globales
-  let vectorLayerFirms = null;      // capa de puntos FIRMS
-  let vectorLayerSelector = null;    // capa del selector
+  // === Variables globales ===
+  let vectorLayerFirms = null;
+  let vectorLayerSelector = null;
   let chartConf = null;
   let chartSat = null;
+
+  // === Cargar capas ráster dinámicamente desde GeoServer ===
+  const rasterSelect = document.getElementById('rasterSelect');
+  fetch("http://localhost:8080/geoserver/raster/wms?service=WMS&version=1.1.0&request=GetCapabilities")
+    .then(res => res.text())
+    .then(str => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(str, "text/xml");
+      const layers = Array.from(xml.getElementsByTagName("Layer"))
+        .filter(l => !l.getElementsByTagName("Layer").length)
+        .map(l => l.getElementsByTagName("Name")[0].textContent);
+
+      layers.forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        rasterSelect.appendChild(opt);
+      });
+    });
+
+  rasterSelect.addEventListener('change', e => {
+    const layerName = e.target.value;
+    if(layerName){
+      rasterLayer.getSource().updateParams({'LAYERS': layerName});
+      rasterLayer.setVisible(true);
+    } else {
+      rasterLayer.setVisible(false);
+    }
+  });
+
+  // === Mantener vectores encima ===
+  const updateVectorZ = () => {
+      if(vectorLayerSelector) vectorLayerSelector.setZIndex(1000);
+      if(vectorLayerFirms) vectorLayerFirms.setZIndex(1000);
+  };
+  map.getLayers().on('add', updateVectorZ);
 
   // === FRP: color y radio ===
   function frpColor(frp) {
@@ -87,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("dashboard").classList.toggle("hidden");
   });
 
-  // === Cargar lista de capas WFS desde GeoServer (sin firms_hotspots) ===
+  // === Cargar lista de capas vectoriales WFS ===
   fetch("/geoserver/ne/ows?service=WFS&version=1.1.0&request=GetCapabilities")
   .then(res => res.text())
   .then(str => {
@@ -95,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const xml = parser.parseFromString(str, "text/xml");
     const layers = Array.from(xml.getElementsByTagName("FeatureType"))
       .map(ft => ft.getElementsByTagName("Name")[0].textContent)
-      .filter(name => name !== "ne:firms_hotspots"); // excluir firms_hotspots
+      .filter(name => name !== "ne:firms_hotspots");
 
     const select = document.getElementById('layerSelect');
     layers.forEach(name => {
@@ -162,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // === Cargar capa seleccionada del selector (polígonos, líneas, puntos) ===
+  // === Cargar capa vectorial del selector ===
   function cargarSelector(layerName) {
     if (!layerName) return;
     if (vectorLayerSelector) { map.removeLayer(vectorLayerSelector); vectorLayerSelector = null; }
@@ -297,26 +343,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // === Botón cargar datos FIRMS ===
-  document.getElementById('cargarBtn').addEventListener('click', ()=>{
-    const fecha=document.getElementById('fechaInput').value;
+  // === Botón cargar FIRMS ===
+  document.getElementById('cargarBtn').addEventListener('click', () => {
+    const fecha = document.getElementById('fechaInput').value;
     if(!fecha){ mostrarMensaje("Selecciona una fecha primero"); return; }
     cargarFirms(fecha);
   });
 
-  // === Cambio selector de capas (carga automática) ===
-  document.getElementById('layerSelect').addEventListener('change', (e) => {
+  // === Cambio selector vectorial ===
+  document.getElementById('layerSelect').addEventListener('change', e => {
     const layerName = e.target.value;
-
-    if (layerName) {
-      // cargar la capa seleccionada
+    if(layerName){
       cargarSelector(layerName);
     } else {
-      // limpiar si regresa a "Selecciona una capa"
-      if (vectorLayerSelector) {
+      if(vectorLayerSelector){
         map.removeLayer(vectorLayerSelector);
         vectorLayerSelector = null;
       }
     }
   });
+
 });

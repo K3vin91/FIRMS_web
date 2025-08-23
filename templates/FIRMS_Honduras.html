@@ -16,9 +16,19 @@
 
 <!-- Controles superiores -->
 <div id="geoserver-controls">
+    <!-- Selector de capas vectoriales -->
+    <label for="layerSelect">Capas Vectoriales:</label>
     <select id="layerSelect">
-        <option value="">Selecciona una capa</option>
+        <option value="">Selecciona una capa vectorial</option>
     </select>
+
+    <!-- Selector de capas raster -->
+    <label for="rasterSelect">Capas Ráster:</label>
+    <select id="rasterSelect">
+        <option value="">Selecciona una capa ráster</option>
+    </select>
+
+    <!-- Controles extra -->
     <input type="date" id="fechaInput">
     <button id="cargarBtn">Cargar datos</button>
 </div>
@@ -68,7 +78,6 @@
     <div class="legend-item"><div class="legend-color" style="background:#bd0026;"></div><span>Extrema</span></div>
 </div>
 
-<!-- Mapa -->
 <!-- Mapa -->
 <div id="map">
     <!-- Selector de capa base -->

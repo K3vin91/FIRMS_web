@@ -99,16 +99,16 @@ body {
     font-size: 0.75rem;
 }
 
-/* Mapa - Ajuste por header más pequeño */
-/* Mapa - Ajustado para no causar scroll */
+/* Mapa - Visible y con espacio para controles */
 #map {
     position: absolute;
-    top: 50px; /* Igual a la altura del header */
+    top: 50px;
     left: 0;
     right: 0;
-    bottom: 0; /* Ocupa todo el espacio restante */
+    bottom: 10px; /* Deja 10px en la parte inferior */
     background: #1a1a1a;
     margin: 0;
+    z-index: 1; /* Asegura que esté debajo de los controles */
 }
 
 /* Botón flotante más pequeño */
@@ -116,7 +116,7 @@ body {
     position: absolute;
     top: 55px;
     right: 10px;
-    z-index: 1100;
+    z-index: 1000;
     background: linear-gradient(135deg, #2c6e91 0%, #1a4a6e 100%);
     color: #fff;
     padding: 6px 12px;
@@ -140,6 +140,7 @@ body {
 }
 
 /* Dashboard más compacto */
+/* Dashboard - ajustado para considerar el footer */
 .dashboard {
     position: absolute;
     top: 55px;
@@ -153,13 +154,13 @@ body {
     border-radius: 8px;
     width: 100%;
     max-width: 420px;
-    z-index: 1005;
+    z-index: 1000;
     opacity: 0;
     transform: translateY(-10px);
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 20px);
+    max-height: calc(100vh - 95px); /* 50px header + 35px footer + 10px margen */
     border: 1px solid rgba(255, 255, 255, 0.08);
     overflow: hidden;
 }
@@ -199,7 +200,7 @@ body {
     gap: 15px;
     padding: 15px;
     overflow-y: auto;
-    max-height: calc(100vh - 30px);
+    max-height: calc(100vh - 125px); /* 95px + 30px extra para el header del dashboard */
 }
 
 .dashboard-text {
@@ -327,9 +328,10 @@ body {
 }
 
 /* Leyenda más compacta */
+/* Leyenda - ajustada para estar sobre el footer */
 #legend {
     position: absolute;
-    bottom: 10px;
+    bottom: 45px; /* 35px (footer) + 10px de separación */
     left: 10px;
     background: rgba(25, 25, 25, 0.95);
     backdrop-filter: blur(8px);
@@ -383,10 +385,11 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* Selector de capas base - compacto */
+/* Selector de capas base - ajustado para estar sobre la leyenda */
+/* Selector de capas base - posición visible */
 #base-layer-controls {
     position: absolute;
-    bottom: 200px;
+    bottom: 220px;
     left: 10px;
     right: auto;
     background: rgba(25, 25, 25, 0.95);
@@ -394,7 +397,7 @@ body {
     padding: 0;
     border-radius: 6px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 1000; /* Alto, pero menor que el footer expandido */
     display: flex;
     flex-direction: column;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -446,7 +449,7 @@ body {
     position: absolute;
     top: 55px;
     left: 10px;
-    z-index: 1100;
+    z-index: 1000;
     display: flex;
     flex-direction: column;
     background: rgba(25, 25, 25, 0.95);
@@ -531,9 +534,121 @@ body {
     box-shadow: 0 2px 6px rgba(44, 110, 145, 0.3);
 }
 
-/* Footer compacto - opcional si decides usarlo */
+/* ===== FOOTER COMPACTO ===== */
 #footer {
-    display: none; /* Oculto por defecto, puedes activarlo si quieres */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #0a2e1f 0%, #082019 100%);
+    color: #d1f7e5;
+    padding: 0;
+    border-top: 2px solid #1a5c48;
+    display: block !important; /* Forzar que se muestre */
+    z-index: 900;
+    height: 30px;
+    overflow: hidden;
+}
+
+#footer.expanded {
+    z-index: 2000;
+    height: 160px; /* Altura cuando está expandido */
+}
+
+.footer-content {
+    padding: 10px 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    opacity: 1;
+    visibility: visible;
+}
+
+.footer-content.hidden {
+    display: none; /* Solo ocultar el contenido, no el footer completo */
+}
+
+.footer-section {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-section h4 {
+    color: #ffffff;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-bottom: 1px solid #1a5c48;
+    padding-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.footer-section p {
+    font-size: 0.7rem;
+    line-height: 1.2;
+    color: #d1f7e5; /* Color más claro para mejor visibilidad */
+    margin: 3px 0;
+}
+
+.footer-section a {
+    color: #4db6ac;
+    text-decoration: none;
+    font-size: 0.7rem;
+    transition: color 0.3s;
+}
+
+.footer-section a:hover {
+    color: #80deea;
+    text-decoration: underline;
+}
+
+/* Línea inferior permanente (siempre visible) */
+.footer-bottom {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+}
+
+.footer-bottom p {
+    font-size: 0.7rem;
+    color: #a8e6cf;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-info-toggle {
+    background: linear-gradient(135deg, #1a5c48 0%, #0d3b2e 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    position: relative;
+    z-index: 2001;
+}
+
+.footer-info-toggle:hover {
+    background: linear-gradient(135deg, #2c6e91 0%, #1a5c48 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.footer-info-toggle i {
+    font-size: 0.8rem;
 }
 
 /* Responsive para pantallas pequeñas */
@@ -606,4 +721,35 @@ body {
     .chart-wrapper {
         height: 120px;
     }
+}
+
+/* Estilo para el input de fecha - Icono visible en tema oscuro */
+#geoserver-controls input[type="date"] {
+    color-scheme: dark; /* Activa el modo oscuro del calendario */
+    background-color: #2a2a2a; /* Fondo ligeramente más claro para mejor contraste */
+    color: #fff;
+    border: 1px solid #555;
+}
+
+/* Icono del calendario en navegadores WebKit (Chrome, Safari, Edge) */
+#geoserver-controls input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0) brightness(2); /* Icono blanco brillante */
+    opacity: 0.9;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+#geoserver-controls input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Para Firefox */
+#geoserver-controls input[type="date"]::-moz-calendar-picker-indicator {
+    filter: invert(0) brightness(2); /* Icono blanco brillante */
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+#geoserver-controls input[type="date"]::-moz-calendar-picker-indicator:hover {
+    opacity: 1;
 }

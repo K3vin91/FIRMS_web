@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
       layers: [stamenTerrain, osmStandard, esriSatellite, mapboxOutdoors, rasterLayer],
       view: new ol.View({
           center: ol.proj.fromLonLat([-86.5, 14.75]),
-          zoom: 8
+          zoom: 7
       }),
       controls: [
           new ol.control.Attribution({ collapsible: false }),
@@ -361,6 +361,56 @@ document.addEventListener("DOMContentLoaded", () => {
         vectorLayerSelector = null;
       }
     }
+  });
+  // =============================================
+  // FUNCIONALIDAD DEL FOOTER - CON Z-INDEX AJUSTADO
+  // =============================================
+  
+  // 1. Configurar el año actual
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+  
+  // 2. Configurar el botón del footer
+  const footerToggle = document.getElementById('footer-info-toggle');
+  const footerContent = document.getElementById('footer-content');
+  const footer = document.getElementById('footer');
+  
+  if (footerToggle && footerContent && footer) {
+      footerToggle.addEventListener('click', function() {
+          const estaExpandido = footer.classList.contains('expanded');
+          
+          if (!estaExpandido) {
+              // Expandir footer
+              footer.classList.add('expanded');
+              footerContent.classList.remove('hidden');
+              this.innerHTML = '<i class="fas fa-chevron-up"></i> Ocultar Información';
+          } else {
+              // Contraer footer
+              footer.classList.remove('expanded');
+              footerContent.classList.add('hidden');
+              this.innerHTML = '<i class="fas fa-info-circle"></i> Información del Geoportal';
+          }
+      });
+  }
+  
+  // 3. Opcional: Cerrar footer al hacer clic fuera de él
+  document.addEventListener('click', function(event) {
+      const footer = document.getElementById('footer');
+      const footerToggle = document.getElementById('footer-info-toggle');
+      const footerContent = document.getElementById('footer-content');
+      
+      if (!footer || !footerContent) return;
+      
+      const estaExpandido = footer.classList.contains('expanded');
+      
+      // Si el footer está expandido y se hizo clic fuera del footer
+      if (estaExpandido && 
+          !footer.contains(event.target) && 
+          event.target !== footerToggle) {
+          
+          footer.classList.remove('expanded');
+          footerContent.classList.add('hidden');
+          footerToggle.innerHTML = '<i class="fas fa-info-circle"></i> Información del Geoportal';
+      }
   });
 
 });
